@@ -65,7 +65,7 @@ const HomeScreen = () => {
                                 {asistenteInfo.ponencias.map((ponencia, index) => {
                                     if (!ponencia.title || !ponencia.dateTime || !ponencia.location) {
                                         console.warn(`Ponencia con índice ${index} está incompleta.`);
-                                        return null; // Si la ponencia no tiene los datos completos, no la mostramos
+                                        return null; // no se muestran ponencias si los datos no están completos
                                     }
                                     return (
                                         <PonenciaInfo

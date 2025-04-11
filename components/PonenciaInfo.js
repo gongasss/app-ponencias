@@ -5,7 +5,6 @@ const PonenciaInfo = ({ ponencia, onBack }) => {
     return (
         <View style={styles.container}>
             <View style={styles.infoContainer}>
-                {/* Usamos las propiedades del objeto ponencia */}
                 <Text style={styles.title}>{ponencia.title}</Text>
 
                 <Text style={styles.label}>Hora:</Text>
@@ -13,11 +12,6 @@ const PonenciaInfo = ({ ponencia, onBack }) => {
 
                 <Text style={styles.label}>Sala:</Text>
                 <Text style={styles.value}>{ponencia.location}</Text>
-
-                {/* Volver al listado de ponencias */}
-                <TouchableOpacity style={styles.button} onPress={onBack}>
-                    <Text style={styles.buttonText}>Volver</Text>
-                </TouchableOpacity>
             </View>
         </View>
     );

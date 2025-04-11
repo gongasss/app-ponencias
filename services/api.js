@@ -1,7 +1,7 @@
 import { Alert } from "react-native";
 
 const USE_MOCK = false; // false = API activada
-const API_BASE_URL = 'http://192.168.3.7:3000/api'; // Define la URL base de la API
+const API_BASE_URL = 'http://192.168.3.7:3000/api'; // URL base de la API
 
 export const fetchAsistenteYPonencias = async (dni) => {
 
@@ -69,7 +69,6 @@ export const fetchAsistenteYPonencias = async (dni) => {
     }
 };
 
-// Función para marcar al asistente como escaneado
 export const marcarAsistenteEscaneado = async (dni) => {
     try {
         const response = await fetch(`${API_BASE_URL}/asistentes/${dni}/scan`, {
@@ -95,7 +94,7 @@ export const marcarAsistenteEscaneado = async (dni) => {
 
         Alert.alert('Asistente escaneado', data.message);
 
-        return data;  // Retorna la respuesta de la API si fue exitosa
+        return data; 
     } catch (error) {
         console.error('Error al marcar como escaneado:', error);
         throw error;
