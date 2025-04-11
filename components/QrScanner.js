@@ -34,16 +34,16 @@ const QrScanner = ({ onScanned, onInvalidQr }) => {
 
         console.log('DNI escaneado:', data);
 
-        const dniRegex = /^[0-9]{8}[A-Za-z]$/;
-        if (!dniRegex.test(data)) {
-            console.warn('Código QR escaneado no tiene formato de DNI:', data);
-            setScanned(true);
-            if (onInvalidQr) {
-                onInvalidQr('El código QR escaneado no tiene un formato de DNI válido.');
-            }
-            setTimeout(() => setScanned(false), 2000);
-            return;
-        }
+        //const dniRegex = /^[0-9]{8}[A-Za-z]$/;
+        //if (!dniRegex.test(data)) {
+        //    console.warn('Código QR escaneado no tiene formato de DNI:', data);
+        //    setScanned(true);
+        //    if (onInvalidQr) {
+        //        onInvalidQr('El código QR escaneado no tiene un formato de DNI válido.');
+        //    }
+        //    setTimeout(() => setScanned(false), 2000);
+        //    return;
+        //}
 
         setScanned(true);
 
