@@ -30,34 +30,30 @@ const QrScanner = ({ onScanned, onInvalidQr }) => {
     }
 
     const handleBarCodeScanned = async ({ type, data }) => {
-        if (scanned) return;
-
-        console.log('DNI escaneado:', data);
-
-        //const dniRegex = /^[0-9]{8}[A-Za-z]$/;
-        //if (!dniRegex.test(data)) {
-        //    console.warn('Código QR escaneado no tiene formato de DNI:', data);
-        //    setScanned(true);
-        //    if (onInvalidQr) {
-        //        onInvalidQr('El código QR escaneado no tiene un formato de DNI válido.');
-        //    }
-        //    setTimeout(() => setScanned(false), 2000);
-        //    return;
-        //}
-
-        setScanned(true);
-
-        try {
-            await addScannedUser(data);
-            const response = await fetchAsistenteYPonencias(data);
-            onScanned(response);
-        } catch (error) {
-            Alert.alert('Error al escanear el código QR. Es posible que el DNI no sea válido.', error);
-            console.error('Error al recuperar la ponencia:', error);
-        }
-
-        setTimeout(() => setScanned(false), 2000);
-    };
+      //if (scanned) return;
+  
+      setScanned(true);
+      console.log('DNI escaneado:', data);
+  
+      // (Opcional) Validación del formato de DNI
+      // const dniRegex = /^[0-9]{8}[A-Za-z]$/;
+      // if (!dniRegex.test(data)) {
+      //     onInvalidQr?.('El código QR no tiene un formato de DNI válido.');
+      //     setTimeout(() => setScanned(false), 2000);
+      //     return;
+      // }
+  
+      try {
+          await addScannedUser(data); // sigue siendo útil para evitar escaneos duplicados rápidos
+          onScanned({ dni: data });   // delega todo al padre (HomeScreen)
+      } catch (error) {
+          onInvalidQr?.('Error procesando el código QR.');
+          console.error('Error en QR:', error);
+      }
+  
+      setTimeout(() => setScanned(false), 2000);
+  };
+  
 
     return (
         <View style={styles.container}>

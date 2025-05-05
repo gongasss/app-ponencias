@@ -1,23 +1,23 @@
 import { Alert } from "react-native";
 
-const USE_MOCK = false; // false = API activada
-const API_BASE_URL = 'http://192.168.3.7:3000/api'; // URL base de la API
+// URL base de la API final
+const USE_MOCK = false;
+const API_BASE_URL = 'https://ponencias.hybridap.es/api';
 
-export const fetchAsistenteYPonencias = async (dni) => {
-
+export const fetchAsistenteYPonencias = async (id) => {
     if (USE_MOCK) {
-        console.log('DNI: ', dni);
+        console.log('ID:', id);
         return new Promise((resolve) => {
             setTimeout(() => {
                 const mockAsistente = {
-                    dni,
+                    dni: id,
                     nombre: 'Nombre Mock',
                     apellidos: 'Apellido Mock',
                     ponencias: [
                         { titulo: 'Introducción a React Native (Mock)', hora: '10:00', sala: 'Sala A' },
                         { titulo: 'Backend con Node.js (Mock)', hora: '11:30', sala: 'Sala B' },
                         { titulo: 'GraphQL para principiantes (Mock)', hora: '14:00', sala: 'Sala C' },
-                    ].filter(() => Math.random() > 0.3), // Simula tener o no ponencias de forma aleatoria
+                    ].filter(() => Math.random() > 0.3),
                 };
                 resolve(mockAsistente);
             }, 1000);
@@ -25,15 +25,14 @@ export const fetchAsistenteYPonencias = async (dni) => {
     }
 
     try {
-        // solicitud a la api
-        const response = await fetch(`${API_BASE_URL}/asistentes/${dni}`, {
+        const response = await fetch(`${API_BASE_URL}/asistentes/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
-        const text = await response.text(); // debug
+        const text = await response.text();
         console.log('Respuesta cruda:', text);
 
         if (!response.ok) {
@@ -41,27 +40,16 @@ export const fetchAsistenteYPonencias = async (dni) => {
             throw new Error(`HTTP ${response.status}: ${text}`);
         }
 
-        // Si la respuesta es exitosa, procesamos los datos
         const asistenteData = JSON.parse(text);
 
-        if (asistenteData.error) {
-            Alert.alert('Asistente no encontrado', asistenteData.error);
-            throw new Error(asistenteData.error);
-        }
-
-        const ponencias = asistenteData.ponencias; // Ponencias asociadas al asistente
-
-        // Si no hay ponencias, lanzar un error (opcional, depende de la lógica de tu app)
-        // if (!ponencias || ponencias.length === 0) {
-        //     throw new Error('El asistente no está registrado en ninguna ponencia');
-        // }
-
-        
         return {
-            dni: asistenteData.id,
-            nombre: asistenteData.nombre,
-            apellidos: asistenteData.apellidos,
-            ponencias: asistenteData.ponencias,
+            Id: asistenteData.Id,
+            Nombre: asistenteData.Nombre,
+            Apellidos: asistenteData.Apellidos,
+            Type: asistenteData.Type,
+            Ponencias: asistenteData.Ponencias,
+            Scanned: asistenteData.Scanned,
+            LastScanDateTime: asistenteData.LastScanDateTime,
         };
     } catch (error) {
         console.error('Error al recuperar la información del asistente y sus ponencias:', error);
@@ -69,16 +57,16 @@ export const fetchAsistenteYPonencias = async (dni) => {
     }
 };
 
-export const marcarAsistenteEscaneado = async (dni) => {
+export const marcarAsistenteEscaneado = async (id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/asistentes/${dni}/scan`, {
+        const response = await fetch(`${API_BASE_URL}/asistentes/${id}/scan`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
-        const text = await response.text(); // debug
+        const text = await response.text();
         console.log('Respuesta cruda:', text);
 
         if (!response.ok) {
@@ -87,14 +75,10 @@ export const marcarAsistenteEscaneado = async (dni) => {
         }
 
         const data = JSON.parse(text);
-        if (data.error) {
-            Alert.alert('Error', data.error);
-            throw new Error(data.error);
-        }
 
-        Alert.alert('Asistente escaneado', data.message);
+        Alert.alert('Asistente escaneado', 'La asistencia ha sido registrada correctamente.');
 
-        return data; 
+        return data;
     } catch (error) {
         console.error('Error al marcar como escaneado:', error);
         throw error;

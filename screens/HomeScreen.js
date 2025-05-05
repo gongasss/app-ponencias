@@ -11,23 +11,29 @@ const HomeScreen = () => {
 
     const handleQrScanned = async (data) => {
         if (!data) return;
-
+    
         setLoading(true);
         setError(null);
-        setAsistenteInfo(null); // limpia la información anterior
+        setAsistenteInfo(null);
+    
         try {
-            const response = await fetchAsistenteYPonencias(data.dni);
-            setAsistenteInfo(response);
-            console.log('Asistente:', response);
-
-            await marcarAsistenteEscaneado(data.dni);
+            const asistente = await fetchAsistenteYPonencias(data.dni);
+    
+            // Primero intentamos marcarlo como escaneado
+            await marcarAsistenteEscaneado(asistente.Dni);
+    
+            // Solo si no lanza error, mostramos info
+            setAsistenteInfo(asistente);
+            console.log('Asistente:', asistente);
         } catch (err) {
-            setError('Error al obtener la información del asistente.');
+            setError('El asistente ya fue escaneado o ocurrió un error.');
+            Alert.alert('Error', 'El asistente ya fue escaneado o ocurrió un error.');
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
+    
 
     const handleGoBack = () => {
         setAsistenteInfo(null);
@@ -38,59 +44,65 @@ const HomeScreen = () => {
         Alert.alert('Error al escanear el código QR', error);
     };
 
-  return (
-    <View style={styles.container}>
-        {loading ? (
-            <View style={styles.center}>
-                <ActivityIndicator size="large" color="#0000ff" />
-                <Text>Consultando información...</Text>
-            </View>
-        ) : (
-            <>
-                {!asistenteInfo ? (
-                    <QrScanner onScanned={handleQrScanned} onInvalidQr={handleInvalidQr} />
-                ) : (
-                    <View style={styles.infoContainer}>
-                        <Text style={styles.title}>Información del Asistente</Text>
-                        <Text style={styles.detailText}>
-                            DNI: {asistenteInfo.dni}
-                        </Text>
-                        <Text style={styles.detailText}>
-                            Nombre: {asistenteInfo.nombre} {asistenteInfo.apellidos}
-                        </Text>
+    return (
+        <View style={styles.container}>
+            {loading ? (
+                <View style={styles.center}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text>Consultando información...</Text>
+                </View>
+            ) : (
+                <>
+                    {!asistenteInfo ? (
+                        <QrScanner onScanned={handleQrScanned} onInvalidQr={handleInvalidQr} />
+                    ) : (
+                        <View style={styles.infoContainer}>
+                            {asistenteInfo.Type === 'invitado' && (
+                                <View style={styles.invitadoBadge}>
+                                    <Text style={styles.invitadoText}>INVITADO</Text>
+                                </View>
+                            )}
 
-                        {asistenteInfo.ponencias && asistenteInfo.ponencias.length > 0 ? (
-                            <ScrollView style={styles.ponenciasList}>
-                                <Text style={styles.subtitle}>Ponencias Asignadas:</Text>
-                                {asistenteInfo.ponencias.map((ponencia, index) => {
-                                    if (!ponencia.title || !ponencia.dateTime || !ponencia.location) {
-                                        console.warn(`Ponencia con índice ${index} está incompleta.`);
-                                        return null; // no se muestran ponencias si los datos no están completos
-                                    }
-                                    return (
-                                        <PonenciaInfo
-                                            key={index}
-                                            ponencia={ponencia}
-                                            onBack={handleGoBack}
-                                        />
-                                    );
-                                })}
-                            </ScrollView>
-                        ) : (
-                            <Text style={styles.noPonencias}>Este asistente no tiene ponencias asignadas.</Text>
-                        )}
+                            <Text style={styles.title}>Información del Asistente</Text>
+                            <Text style={styles.detailText}>
+                                ID: {asistenteInfo.Id}
+                            </Text>
+                            <Text style={styles.detailText}>
+                                Nombre: {asistenteInfo.Nombre} {asistenteInfo.Apellidos}
+                            </Text>
 
-                        <TouchableOpacity style={styles.scanAgainButton} onPress={handleGoBack}>
-                            <Text style={styles.buttonText}>Escanear Otro DNI</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+                            {asistenteInfo.Ponencias && asistenteInfo.Ponencias.length > 0 ? (
+                                <ScrollView style={styles.ponenciasList}>
+                                    <Text style={styles.subtitle}>Ponencias Asignadas:</Text>
+                                    {asistenteInfo.Ponencias.map((ponencia, index) => {
+                                        if (!ponencia.Title || !ponencia.FechaInicio || !ponencia.Color) {
+                                            console.warn(`Ponencia con índice ${index} está incompleta.`);
+                                            return null; // no se muestran ponencias si los datos no están completos
+                                        }
+                                        return (
+                                            <PonenciaInfo
+                                                key={index}
+                                                ponencia={ponencia}
+                                                onBack={handleGoBack}
+                                            />
+                                        );
+                                    })}
+                                </ScrollView>
+                            ) : (
+                                <Text style={styles.noPonencias}>Este asistente no tiene ponencias asignadas.</Text>
+                            )}
 
-                {error && <Text style={styles.error}>{error}</Text>}
-            </>
-        )}
-    </View>
-);
+                            <TouchableOpacity style={styles.scanAgainButton} onPress={handleGoBack}>
+                                <Text style={styles.buttonText}>Escanear Otro DNI</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
+                    {error && <Text style={styles.error}>{error}</Text>}
+                </>
+            )}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -119,6 +131,8 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 3,
         marginTop: 20,
+        overflow: 'hidden',
+        zIndex: 1,
     },
     title: {
         fontSize: 22,
@@ -161,6 +175,24 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    invitadoBadge: {
+        position: 'absolute',
+        top: '4%',
+        left: '-20%',
+        transform: [{ rotate: '-45deg' }],
+        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+        paddingVertical: 10,
+        paddingHorizontal: 60,
+        zIndex: 2,
+    },
+    invitadoText: {
+        color: 'red',
+        fontSize: 24,
+        fontWeight: 'bold',
+        letterSpacing: 2,
+        textAlign: 'center',
+        opacity: 0.5,
     },
 });
 
