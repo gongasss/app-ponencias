@@ -58,8 +58,8 @@ const HomeScreen = () => {
                     ) : (
                         <View style={styles.infoContainer}>
                             {asistenteInfo.Type === 'invitado' && (
-                                <View style={styles.invitadoBadge}>
-                                    <Text style={styles.invitadoText}>INVITADO</Text>
+                                <View style={styles.invitadoBadgeTop}>
+                                    <Text style={styles.invitadoTextTop}>INVITADO</Text>
                                 </View>
                             )}
 
@@ -193,6 +193,21 @@ const styles = StyleSheet.create({
         letterSpacing: 2,
         textAlign: 'center',
         opacity: 0.5,
+    },
+    invitadoBadgeTop: {
+        alignSelf: 'center',
+        backgroundColor: '#ffe6e6',
+        paddingHorizontal: 16,
+        paddingVertical: 6,
+        borderRadius: 16,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#ff9999',
+    },
+    invitadoTextTop: {
+        color: 'red',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });
 

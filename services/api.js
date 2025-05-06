@@ -10,15 +10,31 @@ export const fetchAsistenteYPonencias = async (id) => {
         return new Promise((resolve) => {
             setTimeout(() => {
                 const mockAsistente = {
-                    dni: id,
-                    nombre: 'Nombre Mock',
-                    apellidos: 'Apellido Mock',
-                    ponencias: [
-                        { titulo: 'Introducción a React Native (Mock)', hora: '10:00', sala: 'Sala A' },
-                        { titulo: 'Backend con Node.js (Mock)', hora: '11:30', sala: 'Sala B' },
-                        { titulo: 'GraphQL para principiantes (Mock)', hora: '14:00', sala: 'Sala C' },
-                    ].filter(() => Math.random() > 0.3),
-                };
+                    Id: id,
+                    Nombre: 'Sandra',
+                    Apellidos: 'Rodriguez',
+                    Type: 'invitado',
+                    Ponencias: [
+                        {
+                            Id: 2,
+                            Title: 'Reglamentos',
+                            FechaInicio: '2025-05-10T00:00:00',
+                            FechaFin: '2025-05-11T00:00:00',
+                            FechaModificacion: '2025-04-28T10:43:26.9',
+                            Color: '#fdd835',
+                        },
+                        {
+                            Id: 3,
+                            Title: 'Juegos',
+                            FechaInicio: '2025-05-10T00:00:00',
+                            FechaFin: '2025-05-11T00:00:00',
+                            FechaModificacion: '2025-04-28T10:43:26.9',
+                            Color: '#fff835',
+                        },
+                    ],
+                    Scanned: false,
+                    LastScanDateTime: null,
+                };                
                 resolve(mockAsistente);
             }, 1000);
         });
